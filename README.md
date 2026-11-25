@@ -18,8 +18,9 @@ and Vial latency untouched.
 - **Idle sleep** (RMK built-in, enabled here): radio + CPU sleep after 15 min of no
   typing; the first keypress wakes the keyboard. Host-suspend sleep (Mac sleeps →
   keyboard sleeps) works as well.
-- **Reduced BLE TX power** (−8 dBm vs the 0 dBm default): ~6× less radio transmit power
-  with no practical range loss at desk distance.
+- **BLE TX power at 0 dBm** (default): −8 dBm was tested and **reverted** — the
+  half-to-half split link flapped at normal usage distance (right-half lag, link-lost
+  light flashes). Battery savings come from sleep + rail gating instead.
 - **Hardened SK6812 driver**: single-pass PWM frames (the data line can never freeze
   mid-frame and latch the LEDs white), failed frame writes are retried, and the current
   frame is re-sent every 5 s as a self-heal against latch glitches.
@@ -73,7 +74,8 @@ Verified empirically on this hardware (not copied from schematics):
   failed frame writes are retried, and the frame is re-sent every 5 s as a self-heal.
 
 **Bluetooth & power**
-- BLE split: left half is central, 2M PHY, TX power −8 dBm (desk-range savings).
+- BLE split: left half is central, 2M PHY, TX power 0 dBm (−8 dBm tested and reverted:
+  the split link flapped at normal usage distance — right-half lag + link-lost flashes).
 - Idle sleep after 15 min of no typing (RMK built-in); host-suspend sleep also works.
   Sleep keeps the BLE connection alive — the host never sees a disconnect; the first
   keypress wakes the keyboard.
