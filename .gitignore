@@ -10,3 +10,11 @@ rmk-cornix/rmk/nrf52840_split/*.uf2
 # Upstream clone metadata kept outside the tree (rmk-cornix is vendored)
 .rmk-cornix-upstream-git/
 .rmk-upstream-git/
+
+# Vendored upstream example boards not used by this keyboard
+rmk-cornix/rmk/*
+!rmk-cornix/rmk/nrf52840_split/
+rmk-cornix/.github/
+
+# Full working notes (kept local; history lives in git log)
+ROADMAP.md

@@ -56,8 +56,45 @@ rmk-cornix/                   Firmware source (vendored from adong660/rmk-cornix
     src/led.rs                Custom CornixLed processor + raw SK6812 PWM driver
     src/central.rs            Central (left half) entry, registers the LED processor
     src/peripheral.rs         Peripheral (right half) entry
-ROADMAP.md                    Full reverse-engineering notes, findings, and decision log
 ```
+
+## Design notes & hardware findings
+
+Verified empirically on this hardware (not copied from schematics):
+
+**Indicator LEDs (per half)**
+- Two SK6812 addressable LEDs on one PWM-driven data line; chain order inner → outer,
+  byte order **R,B,G** (not GRB).
+- The white lamps are **not** addressable — they sit on the SK6812 power rail
+  (left `P0_13`, right `P0_24`, active-high).
+- The firmware **gates that rail**: ~3 s after the lights have nothing to show it cuts
+  power (all lamps dark, battery saved) and restores it just before the next event light.
+- Driver hardening: single-pass PWM frames (the data line can never freeze mid-frame),
+  failed frame writes are retried, and the frame is re-sent every 5 s as a self-heal.
+
+**Bluetooth & power**
+- BLE split: left half is central, 2M PHY, TX power −8 dBm (desk-range savings).
+- Idle sleep after 15 min of no typing (RMK built-in); host-suspend sleep also works.
+  Sleep keeps the BLE connection alive — the host never sees a disconnect; the first
+  keypress wakes the keyboard.
+- Battery sense on `P0_05` (divider 2000/2806); each half reports its own battery,
+  low-battery flash, and charging breathing.
+
+**Encoders**
+- Both knobs on `P1_04`/`P1_06` (per half), `phase = "resolution"`, `resolution = 4`.
+- **`internal_pullup = true` is required** — the board has no external pull-ups, so with
+  RMK's default (no pull) the knobs silently do nothing.
+
+**Storage**
+- Vial layout and BLE bonds persist across reboots; **flashing wipes both** — re-pair
+  and reload `main-cornix.vil` after every flash.
+
+**Known limitations**
+- White lamps light up during event flashes (they share the rail with the addressable
+  LEDs; the flash would be invisible without them).
+- Dongle mode is not enabled; proprietary 2.4 GHz receivers (Logitech Bolt/Lightspeed/
+  Unifying) are not usable — RMK dongles must be BLE-capable boards running RMK's
+  dongle firmware.
 
 ## Building
 
@@ -111,7 +148,6 @@ Rollback: flash the stock UF2s from `firmware-official-v1.12/` the same way.
 - **Dongle mode**: RMK supports a USB dongle host (like the Beebkeeb Prospector for ZMK);
   not used here. Proprietary 2.4 GHz receivers (Logitech Bolt/Lightspeed/Unifying) cannot
   be used — RMK dongles must be BLE-capable boards running RMK's dongle firmware.
-- Full history of findings and decisions: [`ROADMAP.md`](ROADMAP.md).
 
 ### Solved gotchas (keep in mind when editing config)
 
