@@ -1,0 +1,12 @@
+# Build artifacts
+target/
+*.hex
+.DS_Store
+*.bak
+
+# Intermediate UF2s in the source tree (release copies live in firmware-custom-rmk09/)
+rmk-cornix/rmk/nrf52840_split/*.uf2
+
+# Upstream clone metadata kept outside the tree (rmk-cornix is vendored)
+.rmk-cornix-upstream-git/
+.rmk-upstream-git/
