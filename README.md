@@ -128,8 +128,10 @@ cp firmware-custom-rmk09/rmk-cornix-central.uf2    /Volumes/cornix/   # left
 cp firmware-custom-rmk09/rmk-cornix-peripheral.uf2 /Volumes/cornix/   # right
 ```
 
-**After every flash**: RMK storage and BLE bonds are wiped — re-pair the keyboard with
-your host(s) and reload `main-cornix.vil` in Vial.
+**After flashing**: the UF2 only overwrites the application region, so your Vial layout
+and BLE bonds normally **survive** re-flashes (verified in practice). Re-pair only if the
+host won't reconnect, and reload `main-cornix.vil` only if the layout looks wrong — e.g.
+after a major RMK version bump that changes the storage format.
 
 Rollback: flash the stock UF2s from `firmware-official-v1.12/` the same way.
 
