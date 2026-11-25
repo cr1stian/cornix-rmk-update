@@ -18,7 +18,7 @@ and Vial latency untouched.
 - **Idle sleep** (RMK built-in, enabled here): radio + CPU sleep after 15 min of no
   typing; the first keypress wakes the keyboard. Host-suspend sleep (Mac sleeps →
   keyboard sleeps) works as well.
-- **BLE TX power at 0 dBm** (default): −8 dBm was tested and **reverted** — the
+- **BLE TX power at 0 dBm** (default): −8 and −4 dBm were tested and **reverted** — the
   half-to-half split link flapped at normal usage distance (right-half lag, link-lost
   light flashes). Battery savings come from sleep + rail gating instead.
 - **Hardened SK6812 driver**: single-pass PWM frames (the data line can never freeze
