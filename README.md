@@ -108,12 +108,15 @@ Rollback: flash the stock UF2s from `firmware-official-v1.12/` the same way.
 
 ## Known issues / backlog
 
-- **Encoders**: both halves' encoders are declared in `keyboard.toml` and mapped in the
-  default keymap, but scroll/volume actions currently do nothing — under investigation
-  (see ROADMAP).
 - **Dongle mode**: RMK supports a USB dongle host (like the Beebkeeb Prospector for ZMK);
-  not used here.
+  not used here. Proprietary 2.4 GHz receivers (Logitech Bolt/Lightspeed/Unifying) cannot
+  be used — RMK dongles must be BLE-capable boards running RMK's dongle firmware.
 - Full history of findings and decisions: [`ROADMAP.md`](ROADMAP.md).
+
+### Solved gotchas (keep in mind when editing config)
+
+- **Encoders need `internal_pullup = true`** — RMK defaults to no pull (expects external
+  resistors); the Cornix has none, so without this the knobs silently do nothing.
 
 ## Credits
 

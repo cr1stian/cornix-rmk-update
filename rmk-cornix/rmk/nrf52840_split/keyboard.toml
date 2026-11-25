@@ -39,6 +39,10 @@ pin_a = "P1_04"
 pin_b = "P1_06"
 phase = "resolution"
 resolution = 4
+# RMK defaults to NO pull (expects external resistors). If the board has none,
+# the pins float and the encoder emits nothing at all. Internal pull-ups are
+# harmless if external ones exist too.
+internal_pullup = true
 
 [[split.peripheral]]
 rows = 4
@@ -55,6 +59,7 @@ pin_a = "P1_04"
 pin_b = "P1_06"
 phase = "resolution"
 resolution = 4
+internal_pullup = true
 
 # NOTE: the key renames (num_ble_profiles, max_combos, ...) landed in RMK
 # *unreleased*, not 0.9.0 — 0.9.0 still uses the 0.8-era names below.

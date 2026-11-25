@@ -244,17 +244,21 @@ goes out the next tick). User confirmed: lights dark when connected+idle, only e
 light them — matches official behavior. Right half goes dark a beat before the left
 (left's BLE flash starts later, so its rail timer ends later) — accepted.
 
+## Encoder fix — root cause: missing pull-ups
+
+Both halves' encoders (left = volume, right = scroll) did nothing. RMK's encoder config
+defaults `internal_pullup = false` ("external pull-up resistor is needed"), and the Cornix
+board has none on the encoder lines → pins floated, zero quadrature edges, zero events.
+**Fix:** `internal_pullup = true` on both `[[split.*.input_device.encoder]]` blocks.
+Verified working on hardware. Pins P1_04/P1_06 (both halves) from the community port are
+correct after all; `phase = "resolution", resolution = 4` decodes fine.
+
 ## Out of scope / later
 
-- **Encoder bug (queued):** right-half encoder (set to mouse scroll in Vial) and left-half
-  encoder (volume) do nothing. Encoder inputs are declared in `keyboard.toml`
-  (`[[split.*.input_device.encoder]]`, pins P1_04/P1_06, phase=resolution, resolution=4)
-  and the default keymap has encoder actions, so investigate: do encoder events reach RMK
-  at all (Vial test: assign plain keycodes like PgDn/PgUp in Vial and test), is the
-  phase/resolution config right, and does Vial's encoder remapping persist?
-- **Dongle mode:** RMK has a `dongle` feature (USB dongle acting as BLE host/proxy, like
-  the Beebkeeb Prospector for ZMK). Would need separate dongle firmware on a dongle board;
-  keyboard side mostly exists (profiles). Only relevant if an RMK-based dongle is acquired.
+- **Dongle mode:** RMK supports a USB dongle host (like the Beebkeeb Prospector for ZMK);
+  not used here. Note: proprietary 2.4 GHz receivers (Logitech Bolt/Lightspeed/Unifying)
+  cannot serve as dongles — sealed firmware, proprietary protocols; RMK dongles must be
+  BLE-capable boards (nRF52840-class) running RMK's dongle firmware.
 
 - Fine-tuning LED colors/patterns to exactly match the official firmware (behavior is
   reconstructed from the manual, not frame-captured from the official `src/rgb/mod.rs`).
